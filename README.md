@@ -1,126 +1,32 @@
 # Lazy Loading support with Syncfusion components in React
 
-This sample explains how to do Lazy Loading with Syncfusion components in React.
+This repository shows how to load Syncfusion components (for example Grid and Calendar) on demand rather than bundling all component code up front. The project uses route-level code splitting and a small asynchronous loader to import component modules only when their routes are visited, which reduces initial load time.
 
-## Lazy Loading 
+## Features
 
-In the Lazy Loading technique, you can load additional payload only on demand. You can lazy load the Syncfusion components and routes in React by using Code splitting. The React will load only the needed components for a path instead of loading everything in the application. This is the main use of Code splitting. So, it reduces the initial loading time of the application.
+- Lazy loads Syncfusion Grid and Calendar components to reduce initial bundle size
+- Route-level code splitting so only route-specific components are fetched when needed
+- Small async loader wrapper for consistent error and loading state handling
+- Preserves responsive behavior and feature parity with eagerly-loaded components
+- Demonstrates on-demand registration of Syncfusion modules to avoid unnecessary imports
 
-## Getting Started
+## Prerequisites
 
-For creating the Syncfusion components in React, refer to the [`getting started`](https://ej2.syncfusion.com/react/documentation/introduction/) documentation.
+Refer to the Syncfusion React getting started documentation for setup and licensing: https://ej2.syncfusion.com/react/documentation/introduction/
 
-## React sample with Lazy Loading Routes
+## Installation and Run
 
-We have created the component files for Syncfusion Calendar and Grid components separately.
-
-In the blog.js file, Syncfusion Calendar component has been added.
-
-```typescript
-import React, { Component } from 'react'
-import './Blog.css'
-import { CalendarComponent } from '@syncfusion/ej2-react-calendars';
-
-class Blog extends Component {
-  
-    render () {
-        return (
-             <CalendarComponent id="calendar" />
-        )
-    }
-}
-
-export default Blog
-```
- 
-In the maps.js file, Syncfusion Grid component has been added.
-
-```typescript
-import React, { Component } from 'react'
-import './Maps.css'
-import { ColumnDirective, ColumnsDirective, Filter, GridComponent, Group, Inject, Page, PageSettingsModel, Sort } from '@syncfusion/ej2-react-grids';
-import {data} from './datasource'
-
-class Maps extends Component {
-
-     pageSettings= { pageSize: 6 }
-    render () {
-        return (
-            <GridComponent dataSource={data} allowPaging={true} pageSettings={ this.pageSettings }>
-            <ColumnsDirective>
-                <ColumnDirective field='OrderID' width='100' textAlign="Right"/>
-                <ColumnDirective field='CustomerID' width='100'/>
-                <ColumnDirective field='EmployeeID' width='100' textAlign="Right"/>
-                <ColumnDirective field='Freight' width='100' format="C2" textAlign="Right"/>
-                <ColumnDirective field='ShipCountry' width='100'/>
-            </ColumnsDirective>
-            <Inject services={[Page, Sort, Filter, Group]} />
-        </GridComponent>
-        )
-    }
-}
-
-export default Maps
-```
- 
-In the AsyncComponent.js file, we have implemented code splitting to dynamically import the components. 
-
-```typescript
-import React, { Component } from "react";
-
-export default function asyncComponent(getComponent) {
-    class AsyncComponent extends Component {
-        static Component = null;
-        state = { Component: AsyncComponent.Component };
-
-        componentWillMount() {
-            if (!this.state.Component) {
-                getComponent().then(Component => {
-                    AsyncComponent.Component = Component
-                    this.setState({ Component })
-                })
-            }
-        }
-        render() {
-            const { Component } = this.state
-            if (Component) {
-                return <Component {...this.props} />
-            }
-            return null
-        }
-    }
-
-    return AsyncComponent;
-}
-```
-
-The Syncfusion components (Grid and Calendar) are added to the App.js file dynamically.
-
-```typescript
-// Dynamically imported components
-const Home = asyncComponent(() =>
-    import('./Home/Home').then(module => module.default)
-)
-const Maps = asyncComponent(() =>
-    import('./Maps/Maps').then(module => module.default)
-)
-const Blog = asyncComponent(() =>
-    import('./Blog/Blog').then(module => module.default)
-)
-```
-
-## Run the application
-
-Build and Run the application using the below commands.
-
+Install the project dependencies:
 ```bash
-# install dependencies
 npm install
+```
 
-# build the application
+To Build the project:
+```bash
 npm run build
+```
 
-# run the application
+To Start the development server:
+```bash
 npm run start
 ```
- 
